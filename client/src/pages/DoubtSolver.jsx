@@ -182,6 +182,10 @@ const DoubtSolver = () => {
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Ask a question or paste a screenshot — get step-by-step explanations.
           </p>
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+            ℹ️ Free AI is limited to 2 requests/day per user — the developer is a student running this
+            on a free AI model, so usage is capped to keep it free for everyone.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <select

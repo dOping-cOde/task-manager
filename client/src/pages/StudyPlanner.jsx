@@ -85,6 +85,10 @@ const StudyPlanner = () => {
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Generate a personalised, day-by-day plan — then add it to your schedule in one click.
         </p>
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          ℹ️ Free AI is limited to 2 requests/day per user — the developer is a student running this
+          on a free AI model, so usage is capped to keep it free for everyone.
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

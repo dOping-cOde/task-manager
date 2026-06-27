@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema(
       lastDate: { type: String, default: null }, // YYYY-MM-DD
     },
     achievements: { type: [String], default: [] },
+
+    // --- AI usage (daily rate limit) ---
+    aiUsageDate: { type: String, default: "" }, // YYYY-MM-DD of last AI use
+    aiUsageCount: { type: Number, default: 0 }, // AI requests used that day
   },
   { timestamps: true }
 );
