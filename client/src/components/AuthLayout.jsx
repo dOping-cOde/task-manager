@@ -41,7 +41,15 @@ const AuthLayout = ({ children }) => {
         </div>
 
         <p className="relative z-10 text-xs text-brand-200">
-          © {new Date().getFullYear()} TaskFlow. Built with the MERN stack.
+          © {new Date().getFullYear()} TaskFlow · Designed by{" "}
+          <a
+            href="https://www.facebook.com/profile.php?id=100035490324230"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-white underline-offset-2 hover:underline"
+          >
+            Arun Kumar
+          </a>
         </p>
       </div>
 

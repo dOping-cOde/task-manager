@@ -150,6 +150,22 @@ const Layout = () => {
           <FiChevronLeft className={`transition ${collapsed ? "rotate-180" : ""}`} />
           <span className={collapsed ? "lg:hidden" : ""}>Collapse</span>
         </button>
+
+        <div
+          className={`border-t border-slate-200 px-4 py-3 text-center text-[11px] text-slate-400 dark:border-slate-800 ${
+            collapsed ? "lg:hidden" : ""
+          }`}
+        >
+          Designed by{" "}
+          <a
+            href="https://www.facebook.com/profile.php?id=100035490324230"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+          >
+            Arun Kumar
+          </a>
+        </div>
       </aside>
 
       {/* Main column */}

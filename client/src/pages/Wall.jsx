@@ -6,6 +6,7 @@ import { fetchTasks, updateTask } from "../features/tasks/tasksSlice";
 import TaskModal from "../components/TaskModal";
 import { getCategory } from "../lib/constants";
 import { dueLabel, dateKey, todayKey } from "../lib/dates";
+import useInfiniteScroll from "../lib/useInfiniteScroll";
 
 // Warm sticky-note paper palette, keyed to each CGL subject. These are
 // deliberately richer than the chip colors so the notes read as real paper.
@@ -70,6 +71,11 @@ const Wall = () => {
       ).length,
     [notes]
   );
+
+  // Pin only a growing slice so a wall with hundreds of notes stays smooth.
+  const { visible, hasMore, sentinelRef } = useInfiniteScroll(notes, {
+    pageSize: 24,
+  });
 
   const openCreate = () => {
     setEditingTask(null);
@@ -147,16 +153,26 @@ const Wall = () => {
               ) : notes.length === 0 ? (
                 <EmptyWall onAdd={openCreate} />
               ) : (
-                <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 py-4">
-                  {notes.map((task) => (
-                    <StickyNote
-                      key={task._id}
-                      task={task}
-                      onEdit={openEdit}
-                      onToggle={toggleComplete}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 py-4">
+                    {visible.map((task) => (
+                      <StickyNote
+                        key={task._id}
+                        task={task}
+                        onEdit={openEdit}
+                        onToggle={toggleComplete}
+                      />
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <div
+                      ref={sentinelRef}
+                      className="flex justify-center py-6 text-amber-50/70"
+                    >
+                      <span className="h-6 w-6 animate-spin rounded-full border-2 border-amber-50/40 border-t-amber-50" />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { FiPlus, FiSearch, FiInbox, FiBell } from "react-icons/fi";
+import { FiPlus, FiSearch, FiInbox, FiBell, FiCalendar } from "react-icons/fi";
 
 import { fetchTasks, remindMe } from "../features/tasks/tasksSlice";
 import TaskItem from "../components/TaskItem";
 import TaskModal from "../components/TaskModal";
 import { CATEGORIES } from "../lib/constants";
+import { dateKey, todayKey } from "../lib/dates";
+import useInfiniteScroll from "../lib/useInfiniteScroll";
 
 const STATUS_FILTERS = [
   { value: "all", label: "All" },
@@ -24,6 +26,7 @@ const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [subject, setSubject] = useState("all");
   const [search, setSearch] = useState("");
+  const [todayOnly, setTodayOnly] = useState(false);
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -36,6 +39,7 @@ const Dashboard = () => {
   }, [items]);
 
   const visibleTasks = useMemo(() => {
+    const today = todayKey();
     return items
       .filter((t) => {
         if (statusFilter === "active") return !t.completed;
@@ -43,10 +47,16 @@ const Dashboard = () => {
         return true;
       })
       .filter((t) => (subject === "all" ? true : t.category === subject))
+      .filter((t) => !todayOnly || (t.dueDate && dateKey(t.dueDate) === today))
       .filter((t) =>
         t.title.toLowerCase().includes(search.trim().toLowerCase())
       );
-  }, [items, statusFilter, subject, search]);
+  }, [items, statusFilter, subject, search, todayOnly]);
+
+  // Only render a growing slice so a huge list stays fast.
+  const { visible, hasMore, sentinelRef } = useInfiniteScroll(visibleTasks, {
+    pageSize: 15,
+  });
 
   const [reminding, setReminding] = useState(false);
 
@@ -110,20 +120,34 @@ const Dashboard = () => {
 
       {/* Toolbar */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-          {STATUS_FILTERS.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setStatusFilter(f.value)}
-              className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition ${
-                statusFilter === f.value
-                  ? "bg-brand-600 text-white shadow"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            {STATUS_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setStatusFilter(f.value)}
+                className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition ${
+                  statusFilter === f.value
+                    ? "bg-brand-600 text-white shadow"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setTodayOnly((v) => !v)}
+            className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+              todayOnly
+                ? "border-brand-600 bg-brand-50 text-brand-700"
+                : "border-slate-200 bg-white text-slate-500 hover:text-slate-800"
+            }`}
+            title="Show only tasks due today"
+          >
+            <FiCalendar /> Today
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -161,11 +185,21 @@ const Dashboard = () => {
       ) : visibleTasks.length === 0 ? (
         <EmptyState onCreate={openCreate} hasTasks={items.length > 0} />
       ) : (
-        <div className="space-y-3">
-          {visibleTasks.map((task) => (
-            <TaskItem key={task._id} task={task} onEdit={openEdit} />
-          ))}
-        </div>
+        <>
+          <div className="space-y-3">
+            {visible.map((task) => (
+              <TaskItem key={task._id} task={task} onEdit={openEdit} />
+            ))}
+          </div>
+          {hasMore && (
+            <div
+              ref={sentinelRef}
+              className="flex justify-center py-6 text-sm text-slate-400"
+            >
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-600" />
+            </div>
+          )}
+        </>
       )}
 
       <TaskModal
