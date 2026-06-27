@@ -1,0 +1,44 @@
+# Render Blueprint — free single-service deploy (API + built React app).
+# In Render: New + → Blueprint → pick your repo. It reads this file, then you
+# fill in the secret env vars (marked sync:false) in the dashboard.
+services:
+  - type: web
+    name: cgltracker
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      # --- Secrets: set these in the Render dashboard (never commit them) ---
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      # CLIENT_URL = your Render app URL once you know it (e.g.
+      # https://cgltracker.onrender.com). Used for CORS / email links.
+      - key: CLIENT_URL
+        sync: false
+      - key: APP_URL
+        sync: false
+      # --- Optional email (leave unset to disable) ---
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      # --- Optional extra free AI providers (fallback) ---
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false

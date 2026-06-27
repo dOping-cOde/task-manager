@@ -1,0 +1,16 @@
+{
+  "name": "cgltracker",
+  "version": "1.0.0",
+  "description": "CGLTracker — MERN study tracker for SSC CGL",
+  "private": true,
+  "scripts": {
+    "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+    "start": "npm start --prefix server",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
