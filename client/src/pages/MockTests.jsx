@@ -21,6 +21,7 @@ import {
   deleteMockTest,
 } from "../features/mockTests/mockTestsSlice";
 import { getCategory } from "../lib/constants";
+import useInfiniteScroll from "../lib/useInfiniteScroll";
 
 const CORE = ["Quantitative Aptitude", "Reasoning", "English", "General Awareness"];
 
@@ -76,6 +77,12 @@ const MockTests = () => {
       percent: Math.round(total / n),
     }));
   }, [items]);
+
+  // Newest-first list, paged with infinite scroll so it scales to many tests.
+  const ordered = useMemo(() => [...items].reverse(), [items]);
+  const { visible, hasMore, sentinelRef } = useInfiniteScroll(ordered, {
+    pageSize: 20,
+  });
 
   return (
     <div>
@@ -172,7 +179,7 @@ const MockTests = () => {
         </div>
       ) : (
         <div className="card divide-y divide-slate-100 dark:divide-slate-700">
-          {[...items].reverse().map((t) => (
+          {visible.map((t) => (
             <div key={t._id} className="flex items-center gap-4 p-4">
               <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand-50 text-sm font-extrabold text-brand-600 dark:bg-slate-700 dark:text-brand-300">
                 {pct(t.score, t.maxScore)}%
@@ -228,6 +235,11 @@ const MockTests = () => {
               </button>
             </div>
           ))}
+          {hasMore && (
+            <div ref={sentinelRef} className="flex justify-center py-5">
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-600" />
+            </div>
+          )}
         </div>
       )}
 
