@@ -26,6 +26,9 @@ export const createMockTest = async (req, res, next) => {
     const {
       name,
       provider,
+      link,
+      type,
+      subject,
       date,
       score,
       maxScore,
@@ -48,6 +51,9 @@ export const createMockTest = async (req, res, next) => {
       user: req.user._id,
       name,
       provider,
+      link,
+      type,
+      subject,
       date: date || Date.now(),
       score,
       maxScore,
@@ -84,6 +90,9 @@ export const updateMockTest = async (req, res, next) => {
     const {
       name,
       provider,
+      link,
+      type,
+      subject,
       date,
       score,
       maxScore,
@@ -94,6 +103,9 @@ export const updateMockTest = async (req, res, next) => {
 
     if (name !== undefined) mockTest.name = name;
     if (provider !== undefined) mockTest.provider = provider;
+    if (link !== undefined) mockTest.link = link;
+    if (type !== undefined) mockTest.type = type;
+    if (subject !== undefined) mockTest.subject = subject;
     if (date !== undefined) mockTest.date = date;
     if (score !== undefined) mockTest.score = score;
     if (maxScore !== undefined) mockTest.maxScore = maxScore;

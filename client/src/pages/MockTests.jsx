@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiAward, FiTrendingUp } from "react-icons/fi";
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiAward, FiTrendingUp, FiExternalLink } from "react-icons/fi";
 
 import {
   fetchMockTests,
@@ -57,14 +57,20 @@ const MockTests = () => {
 
   const subjectData = useMemo(() => {
     const agg = {};
-    items.forEach((t) =>
-      (t.sections || []).forEach((s) => {
-        if (!s.max) return;
-        agg[s.subject] ||= { total: 0, n: 0 };
-        agg[s.subject].total += (s.score / s.max) * 100;
-        agg[s.subject].n += 1;
-      })
-    );
+    const add = (subject, score, max) => {
+      if (!max) return;
+      agg[subject] ||= { total: 0, n: 0 };
+      agg[subject].total += (score / max) * 100;
+      agg[subject].n += 1;
+    };
+    items.forEach((t) => {
+      if (t.type === "sectional" && t.subject) {
+        // A sectional mock contributes directly to its subject.
+        add(t.subject, t.score, t.maxScore);
+      } else {
+        (t.sections || []).forEach((s) => add(s.subject, s.score, s.max));
+      }
+    });
     return Object.entries(agg).map(([subject, { total, n }]) => ({
       subject: getCategory(subject).short,
       percent: Math.round(total / n),
@@ -172,13 +178,34 @@ const MockTests = () => {
                 {pct(t.score, t.maxScore)}%
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="truncate font-semibold text-slate-800 dark:text-white">
-                  {t.name}
-                </h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="truncate font-semibold text-slate-800 dark:text-white">
+                    {t.name}
+                  </h4>
+                  {t.type === "sectional" ? (
+                    <span className="shrink-0 rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-[10px] font-bold text-violet-700 dark:border-violet-900 dark:bg-violet-900/30 dark:text-violet-300">
+                      Sectional{t.subject ? ` · ${getCategory(t.subject).short}` : ""}
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                      Full
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {t.provider ? `${t.provider} · ` : ""}
                   {fmtDate(t.date)} · {t.score}/{t.maxScore} · {t.durationMin}m
                 </p>
+                {t.link && (
+                  <a
+                    href={t.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:underline dark:text-brand-400"
+                  >
+                    <FiExternalLink /> Visit mock
+                  </a>
+                )}
               </div>
               <button
                 onClick={() => {
@@ -237,6 +264,9 @@ const MockModal = ({ test, onClose }) => {
   const [form, setForm] = useState({
     name: test?.name || "",
     provider: test?.provider || "",
+    link: test?.link || "",
+    type: test?.type || "full",
+    subject: test?.subject || "Quantitative Aptitude",
     date: test?.date
       ? new Date(test.date).toISOString().slice(0, 10)
       : new Date().toISOString().slice(0, 10),
@@ -244,6 +274,19 @@ const MockModal = ({ test, onClose }) => {
     durationMin: test?.durationMin ?? 60,
     score: test?.score ?? 0,
   });
+
+  // Switch test type, and nudge the default max score to a sensible value.
+  const setType = (type) =>
+    setForm((p) => ({
+      ...p,
+      type,
+      maxScore:
+        type === "sectional" && Number(p.maxScore) === 200
+          ? 50
+          : type === "full" && Number(p.maxScore) === 50
+          ? 200
+          : p.maxScore,
+    }));
   const [sections, setSections] = useState(() => {
     const base = {};
     CORE.forEach((s) => (base[s] = { score: "", max: "", correct: "", wrong: "" }));
@@ -265,19 +308,25 @@ const MockModal = ({ test, onClose }) => {
     e.preventDefault();
     if (!form.name.trim()) return toast.error("Name is required");
 
+    const isSectional = form.type === "sectional";
+
     const payload = {
       ...form,
+      subject: isSectional ? form.subject : "",
       maxScore: Number(form.maxScore),
       durationMin: Number(form.durationMin),
       score: Number(form.score),
       date: new Date(form.date).toISOString(),
-      sections: CORE.filter((s) => sections[s].max !== "").map((s) => ({
-        subject: s,
-        score: Number(sections[s].score) || 0,
-        max: Number(sections[s].max) || 0,
-        correct: Number(sections[s].correct) || 0,
-        wrong: Number(sections[s].wrong) || 0,
-      })),
+      // Per-section breakdown only applies to full-length mocks.
+      sections: isSectional
+        ? []
+        : CORE.filter((s) => sections[s].max !== "").map((s) => ({
+            subject: s,
+            score: Number(sections[s].score) || 0,
+            max: Number(sections[s].max) || 0,
+            correct: Number(sections[s].correct) || 0,
+            wrong: Number(sections[s].wrong) || 0,
+          })),
     };
 
     setSaving(true);
@@ -313,11 +362,56 @@ const MockModal = ({ test, onClose }) => {
         </div>
 
         <form onSubmit={submit} className="space-y-4">
+          {/* Full-length vs sectional */}
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-900/40">
+            {[
+              { value: "full", label: "Full-length" },
+              { value: "sectional", label: "Sectional" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setType(opt.value)}
+                className={`rounded-lg py-2 text-sm font-semibold transition ${
+                  form.type === opt.value
+                    ? "bg-brand-600 text-white shadow"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {form.type === "sectional" && (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">
+                Section
+              </label>
+              <select
+                name="subject"
+                value={form.subject}
+                onChange={handle}
+                className="input-field"
+              >
+                {CORE.map((s) => (
+                  <option key={s} value={s}>
+                    {getCategory(s).emoji} {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <input
             name="name"
             value={form.name}
             onChange={handle}
-            placeholder="Test name (e.g. SSC CGL Mock #12)"
+            placeholder={
+              form.type === "sectional"
+                ? "Test name (e.g. Quant Sectional #4)"
+                : "Test name (e.g. SSC CGL Mock #12)"
+            }
             className="input-field"
             autoFocus
           />
@@ -331,41 +425,51 @@ const MockModal = ({ test, onClose }) => {
             />
             <input type="date" name="date" value={form.date} onChange={handle} className="input-field" />
           </div>
+          <input
+            name="link"
+            type="url"
+            value={form.link}
+            onChange={handle}
+            placeholder="Mock link (optional) — https://…"
+            className="input-field"
+          />
           <div className="grid grid-cols-3 gap-3">
             <LabeledNum label="Score" name="score" value={form.score} onChange={handle} />
             <LabeledNum label="Max" name="maxScore" value={form.maxScore} onChange={handle} />
             <LabeledNum label="Mins" name="durationMin" value={form.durationMin} onChange={handle} />
           </div>
 
-          <div>
-            <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-              Section-wise (optional)
-            </p>
-            <div className="space-y-2">
-              {CORE.map((s) => (
-                <div key={s} className="grid grid-cols-5 items-center gap-2">
-                  <span className="col-span-1 text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {getCategory(s).short}
-                  </span>
-                  {["score", "max", "correct", "wrong"].map((f) => (
-                    <input
-                      key={f}
-                      type="number"
-                      placeholder={f}
-                      value={sections[s][f]}
-                      onChange={(e) =>
-                        setSections((prev) => ({
-                          ...prev,
-                          [s]: { ...prev[s], [f]: e.target.value },
-                        }))
-                      }
-                      className="input-field px-2 py-1.5 text-sm"
-                    />
-                  ))}
-                </div>
-              ))}
+          {form.type === "full" && (
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                Section-wise (optional)
+              </p>
+              <div className="space-y-2">
+                {CORE.map((s) => (
+                  <div key={s} className="grid grid-cols-5 items-center gap-2">
+                    <span className="col-span-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+                      {getCategory(s).short}
+                    </span>
+                    {["score", "max", "correct", "wrong"].map((f) => (
+                      <input
+                        key={f}
+                        type="number"
+                        placeholder={f}
+                        value={sections[s][f]}
+                        onChange={(e) =>
+                          setSections((prev) => ({
+                            ...prev,
+                            [s]: { ...prev[s], [f]: e.target.value },
+                          }))
+                        }
+                        className="input-field px-2 py-1.5 text-sm"
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="btn-ghost">

@@ -40,6 +40,31 @@ const mockTestSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Optional URL to the mock test (to revisit / re-attempt it).
+    link: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    // "full" = full-length mock; "sectional" = a single-section mock.
+    type: {
+      type: String,
+      enum: ["full", "sectional"],
+      default: "full",
+    },
+    // For sectional mocks: which section this score is for.
+    subject: {
+      type: String,
+      enum: [
+        "",
+        "Quantitative Aptitude",
+        "Reasoning",
+        "English",
+        "General Awareness",
+        "General",
+      ],
+      default: "",
+    },
     date: {
       type: Date,
       default: Date.now,
