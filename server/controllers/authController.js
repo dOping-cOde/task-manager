@@ -35,6 +35,9 @@ export const signup = async (req, res, next) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
+      role: user.role,
+      preferences: user.preferences,
       token: generateToken(user._id),
     });
   } catch (error) {
@@ -68,6 +71,9 @@ export const login = async (req, res, next) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
+      role: user.role,
+      preferences: user.preferences,
       token: generateToken(user._id),
     });
   } catch (error) {

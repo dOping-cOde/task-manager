@@ -5,6 +5,9 @@ const initialState = {
   items: [],
   status: "idle", // idle | loading | succeeded | failed
   error: null,
+  // Transient: set when a task flips to completed, consumed by RewardWatcher
+  // to fire confetti + a "great job" message (independent of XP rewards).
+  justCompleted: null,
 };
 
 const extractError = (err) =>
@@ -79,6 +82,10 @@ const tasksSlice = createSlice({
       state.items = [];
       state.status = "idle";
       state.error = null;
+      state.justCompleted = null;
+    },
+    clearJustCompleted: (state) => {
+      state.justCompleted = null;
     },
   },
   extraReducers: (builder) => {
@@ -105,7 +112,13 @@ const tasksSlice = createSlice({
       .addCase(updateTask.fulfilled, (state, action) => {
         const task = action.payload.task;
         const index = state.items.findIndex((t) => t._id === task._id);
+        const wasCompleted = index !== -1 ? state.items[index].completed : false;
         if (index !== -1) state.items[index] = task;
+        // Celebrate only on a genuine not-done -> done transition (so editing a
+        // completed task or un-completing one doesn't trigger confetti).
+        if (!wasCompleted && task.completed) {
+          state.justCompleted = { id: task._id, at: Date.now() };
+        }
       })
       // Delete
       .addCase(deleteTask.fulfilled, (state, action) => {
@@ -114,5 +127,5 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { clearTasks } = tasksSlice.actions;
+export const { clearTasks, clearJustCompleted } = tasksSlice.actions;
 export default tasksSlice.reducer;

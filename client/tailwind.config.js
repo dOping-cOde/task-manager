@@ -48,6 +48,13 @@ export default {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(239,68,68,0.5)" },
           "50%": { boxShadow: "0 0 28px 6px rgba(239,68,68,0.35)" },
         },
+        // Floating praise: starts at center, rises toward the top, fades out.
+        praise: {
+          "0%": { opacity: "0", transform: "translateX(-50%) translateY(0) scale(0.8)" },
+          "15%": { opacity: "1", transform: "translateX(-50%) translateY(0) scale(1)" },
+          "70%": { opacity: "1", transform: "translateX(-50%) translateY(-30vh) scale(1.02)" },
+          "100%": { opacity: "0", transform: "translateX(-50%) translateY(-42vh) scale(1.05)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out",
@@ -55,6 +62,7 @@ export default {
         "slam-in": "slam-in 0.55s cubic-bezier(0.22,1.4,0.36,1)",
         shake: "shake 0.5s ease-in-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        praise: "praise 2s ease-out forwards",
       },
     },
   },

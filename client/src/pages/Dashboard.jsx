@@ -53,9 +53,12 @@ const Dashboard = () => {
       );
   }, [items, statusFilter, subject, search, todayOnly]);
 
-  // Only render a growing slice so a huge list stays fast.
+  // Only render a growing slice so a huge list stays fast. resetKey ties the
+  // window to the active filters (not to task edits), so it pages back to the
+  // top when filters change but not when you complete/edit a task.
   const { visible, hasMore, sentinelRef } = useInfiniteScroll(visibleTasks, {
     pageSize: 15,
+    resetKey: `${statusFilter}|${subject}|${search}|${todayOnly}`,
   });
 
   const [reminding, setReminding] = useState(false);

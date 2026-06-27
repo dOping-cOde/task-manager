@@ -75,6 +75,7 @@ const Wall = () => {
   // Pin only a growing slice so a wall with hundreds of notes stays smooth.
   const { visible, hasMore, sentinelRef } = useInfiniteScroll(notes, {
     pageSize: 24,
+    resetKey: String(showDone),
   });
 
   const openCreate = () => {
