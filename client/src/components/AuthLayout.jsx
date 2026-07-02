@@ -14,7 +14,7 @@ const AuthLayout = ({ children }) => {
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 backdrop-blur">
             <FiCheckCircle className="text-xl" />
           </div>
-          <span className="text-xl font-bold tracking-tight">TaskFlow</span>
+          <span className="text-xl font-bold tracking-tight">Task Flow</span>
         </div>
 
         <div className="relative z-10 max-w-md text-white">
@@ -41,7 +41,7 @@ const AuthLayout = ({ children }) => {
         </div>
 
         <p className="relative z-10 text-xs text-brand-200">
-          © {new Date().getFullYear()} TaskFlow · Designed by{" "}
+          © {new Date().getFullYear()} Task Flow · Designed by{" "}
           <a
             href="https://www.facebook.com/profile.php?id=100035490324230"
             target="_blank"

@@ -127,7 +127,7 @@ const Layout = () => {
             <FiCheckCircle className="text-lg" />
           </div>
           <span className={`text-lg font-bold tracking-tight text-slate-900 dark:text-white ${collapsed ? "lg:hidden" : ""}`}>
-            CGL<span className="text-brand-600">Tracker</span>
+            Task<span className="text-brand-600">Flow</span>
           </span>
           <button
             onClick={() => dispatch(setMobileSidebar(false))}

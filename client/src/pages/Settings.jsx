@@ -123,7 +123,7 @@ const Settings = () => {
       </div>
 
       {/* Appearance */}
-      <Section title="Appearance" subtitle="Choose how CGLTracker looks.">
+      <Section title="Appearance" subtitle="Choose how Task Flow looks.">
         <div className="grid grid-cols-3 gap-3">
           {THEME_OPTIONS.map((opt) => {
             const Icon = opt.icon;

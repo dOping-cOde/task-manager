@@ -118,7 +118,7 @@ const Profile = () => {
           Profile
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Manage how you appear across CGLTracker.
+          Manage how you appear across Task Flow.
         </p>
       </div>
 
