@@ -100,13 +100,17 @@ const ChallengeCard = ({ challenge, dispatch, confirm }) => {
 
   const handleReset = async () => {
     const ok = await confirm({
-      title: "Reset challenge?",
-      message: "This clears all ticked days and starts the 21 days over.",
-      confirmText: "Reset",
+      title: "Reset & restart?",
+      message: `This clears all ${done} ticked day${
+        done === 1 ? "" : "s"
+      } and starts the 21 days over. It counts as attempt #${
+        challenge.attempts + 1
+      }.`,
+      confirmText: "Reset & restart",
       tone: "danger",
     });
     if (!ok) return;
-    dispatch(updateChallenge({ id: challenge._id, updates: { completedDays: [] } }));
+    dispatch(updateChallenge({ id: challenge._id, updates: { resetAttempt: true } }));
   };
 
   const handleDelete = async () => {
@@ -140,6 +144,13 @@ const ChallengeCard = ({ challenge, dispatch, confirm }) => {
               {challenge.description}
             </p>
           )}
+          <p className="mt-1 text-xs font-semibold text-slate-400">
+            {challenge.completed
+              ? `Completed in ${challenge.attempts} attempt${
+                  challenge.attempts === 1 ? "" : "s"
+                } 🎯`
+              : `Attempt #${challenge.attempts}`}
+          </p>
         </div>
         <div className="flex shrink-0 gap-1">
           <button

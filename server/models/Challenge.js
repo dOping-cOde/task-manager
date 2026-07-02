@@ -26,6 +26,9 @@ const challengeSchema = new mongoose.Schema(
           ? [...new Set(arr.filter((n) => Number.isInteger(n) && n >= 0 && n < 21))]
           : [],
     },
+    // How many tries it has taken so far. Starts at 1; every reset (a failed
+    // run) bumps it, so the user can see how many attempts the 21 days took.
+    attempts: { type: Number, default: 1, min: 1 },
     completed: { type: Boolean, default: false },
   },
   { timestamps: true }

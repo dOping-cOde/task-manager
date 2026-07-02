@@ -46,10 +46,17 @@ export const updateChallenge = async (req, res, next) => {
       throw new Error("Not authorized to modify this challenge");
     }
 
-    const { title, description, completedDays } = req.body;
+    const { title, description, completedDays, resetAttempt } = req.body;
     if (title !== undefined) challenge.title = title;
     if (description !== undefined) challenge.description = description;
-    if (completedDays !== undefined) challenge.completedDays = completedDays;
+
+    if (resetAttempt) {
+      // A failed run: start the 21 days over and count it as a new attempt.
+      challenge.completedDays = [];
+      challenge.attempts += 1;
+    } else if (completedDays !== undefined) {
+      challenge.completedDays = completedDays;
+    }
 
     // Finished once all 21 days are ticked off.
     challenge.completed = challenge.completedDays.length >= CHALLENGE_LENGTH;
