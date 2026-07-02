@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { FiUser, FiMail, FiSave, FiTarget, FiUpload, FiTrash2 } from "react-icons/fi";
+import { FiUser, FiMail, FiSave, FiTarget, FiUpload, FiTrash2, FiCalendar } from "react-icons/fi";
 
 import {
   fetchProfile,
@@ -10,6 +10,7 @@ import {
   removeAvatar,
 } from "../features/user/userSlice";
 import { updateUser } from "../features/auth/authSlice";
+import { dateKey } from "../lib/dates";
 
 const MAX_AVATAR_BYTES = 1 * 1024 * 1024; // 1 MB
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
@@ -24,6 +25,7 @@ const Profile = () => {
     avatar: "",
     bio: "",
     targetExam: "",
+    examDate: "",
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -43,6 +45,7 @@ const Profile = () => {
         avatar: src.avatar || "",
         bio: src.bio || "",
         targetExam: src.targetExam || "",
+        examDate: src.examDate ? dateKey(src.examDate) : "",
       });
     }
   }, [profile, authUser]);
@@ -231,6 +234,25 @@ const Profile = () => {
               className="input-field pl-10"
             />
           </div>
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Exam date
+          </label>
+          <div className="relative">
+            <FiCalendar className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="date"
+              name="examDate"
+              value={form.examDate}
+              onChange={handleChange}
+              className="input-field pl-10"
+            />
+          </div>
+          <p className="mt-1 text-xs text-slate-400">
+            Set this to see a live countdown on your dashboard.
+          </p>
         </div>
 
         <div>

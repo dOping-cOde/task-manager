@@ -6,6 +6,7 @@ import { FiPlus, FiSearch, FiInbox, FiBell, FiCalendar, FiTrash2 } from "react-i
 import { fetchTasks, remindMe, deleteAllTasks } from "../features/tasks/tasksSlice";
 import TaskItem from "../components/TaskItem";
 import TaskModal from "../components/TaskModal";
+import ExamFocus from "../components/ExamFocus";
 import { CATEGORIES } from "../lib/constants";
 import { dateKey, todayKey } from "../lib/dates";
 import useInfiniteScroll from "../lib/useInfiniteScroll";
@@ -127,6 +128,9 @@ const Dashboard = () => {
           />
         </div>
       </div>
+
+      {/* Exam countdown + weak-area nudge */}
+      <ExamFocus />
 
       {/* Subject chips */}
       <div className="mb-4 flex flex-wrap gap-2">

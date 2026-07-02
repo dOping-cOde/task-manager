@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
     avatar: { type: String, default: "" }, // URL or data-URI
     bio: { type: String, default: "", maxlength: 300 },
     targetExam: { type: String, default: "SSC CGL" },
+    examDate: { type: Date, default: null }, // target exam day, for the countdown
 
     // --- Preferences / settings ---
     preferences: {

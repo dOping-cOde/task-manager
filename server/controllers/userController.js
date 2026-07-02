@@ -28,12 +28,13 @@ export const updateProfile = async (req, res, next) => {
       throw new Error("User not found");
     }
 
-    const { name, bio, avatar, targetExam } = req.body;
+    const { name, bio, avatar, targetExam, examDate } = req.body;
 
     if (name !== undefined) user.name = name;
     if (bio !== undefined) user.bio = bio;
     if (avatar !== undefined) user.avatar = avatar;
     if (targetExam !== undefined) user.targetExam = targetExam;
+    if (examDate !== undefined) user.examDate = examDate || null;
 
     const updated = await user.save();
 
