@@ -11,6 +11,8 @@ import DoubtSolver from "./pages/DoubtSolver";
 import StudyTimer from "./pages/StudyTimer";
 import MockTests from "./pages/MockTests";
 import Goals from "./pages/Goals";
+import Challenges from "./pages/Challenges";
+import YearTracker from "./pages/YearTracker";
 import Notes from "./pages/Notes";
 import Analytics from "./pages/Analytics";
 import Progress from "./pages/Progress";
@@ -45,6 +47,8 @@ function App() {
         <Route path="/timer" element={<StudyTimer />} />
         <Route path="/mock-tests" element={<MockTests />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/challenges" element={<Challenges />} />
+        <Route path="/year-tracker" element={<YearTracker />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/progress" element={<Progress />} />

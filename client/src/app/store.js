@@ -6,6 +6,8 @@ import uiReducer from "../features/ui/uiSlice";
 import sessionsReducer from "../features/sessions/sessionsSlice";
 import mockTestsReducer from "../features/mockTests/mockTestsSlice";
 import goalsReducer from "../features/goals/goalsSlice";
+import challengesReducer from "../features/challenges/challengesSlice";
+import yearTrackerReducer from "../features/yearTracker/yearTrackerSlice";
 import notesReducer from "../features/notes/notesSlice";
 import notificationsReducer from "../features/notifications/notificationsSlice";
 import userReducer from "../features/user/userSlice";
@@ -21,6 +23,8 @@ export const store = configureStore({
     sessions: sessionsReducer,
     mockTests: mockTestsReducer,
     goals: goalsReducer,
+    challenges: challengesReducer,
+    yearTracker: yearTrackerReducer,
     notes: notesReducer,
     notifications: notificationsReducer,
     user: userReducer,
