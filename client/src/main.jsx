@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { store } from "./app/store";
 import App from "./App";
 import ThemeManager from "./components/ThemeManager";
+import { ConfirmProvider } from "./components/ConfirmProvider";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <BrowserRouter>
         <ThemeManager />
-        <App />
+        <ConfirmProvider>
+          <App />
+        </ConfirmProvider>
         <Toaster
           position="top-right"
           toastOptions={{

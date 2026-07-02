@@ -9,6 +9,7 @@ import TaskModal from "../components/TaskModal";
 import { CATEGORIES } from "../lib/constants";
 import { dateKey, todayKey } from "../lib/dates";
 import useInfiniteScroll from "../lib/useInfiniteScroll";
+import { useConfirm } from "../components/ConfirmProvider";
 
 const STATUS_FILTERS = [
   { value: "all", label: "All" },
@@ -18,6 +19,7 @@ const STATUS_FILTERS = [
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const { items, status } = useSelector((state) => state.tasks);
   const { user } = useSelector((state) => state.auth);
 
@@ -74,12 +76,15 @@ const Dashboard = () => {
   };
 
   const handleDeleteAll = async () => {
-    if (
-      !window.confirm(
-        `Delete all ${items.length} task${items.length === 1 ? "" : "s"}? This cannot be undone.`
-      )
-    )
-      return;
+    const ok = await confirm({
+      title: "Delete all tasks?",
+      message: `This will permanently delete all ${items.length} task${
+        items.length === 1 ? "" : "s"
+      }. This cannot be undone.`,
+      confirmText: "Delete all",
+      tone: "danger",
+    });
+    if (!ok) return;
     setDeletingAll(true);
     const result = await dispatch(deleteAllTasks());
     setDeletingAll(false);

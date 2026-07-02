@@ -5,6 +5,7 @@ import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch, FiStar } from "react-icons/fi
 
 import { fetchNotes, addNote, updateNote, deleteNote } from "../features/notes/notesSlice";
 import { CATEGORIES, getCategory } from "../lib/constants";
+import { useConfirm } from "../components/ConfirmProvider";
 
 const COLORS = {
   default: "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700",
@@ -23,6 +24,7 @@ const COLOR_SWATCH = {
 
 const Notes = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const { items, status } = useSelector((s) => s.notes);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -123,7 +125,13 @@ const Notes = () => {
                     </button>
                     <button
                       onClick={async () => {
-                        if (!window.confirm("Delete this note?")) return;
+                        const ok = await confirm({
+                          title: "Delete note?",
+                          message: "This note will be permanently deleted.",
+                          confirmText: "Delete",
+                          tone: "danger",
+                        });
+                        if (!ok) return;
                         const r = await dispatch(deleteNote(n._id));
                         if (deleteNote.fulfilled.match(r)) toast.success("Deleted");
                       }}

@@ -5,6 +5,7 @@ import { FiPlus, FiEdit2, FiTrash2, FiX, FiTarget, FiCheck } from "react-icons/f
 
 import { fetchGoals, addGoal, updateGoal, deleteGoal } from "../features/goals/goalsSlice";
 import { dueLabel } from "../lib/dates";
+import { useConfirm } from "../components/ConfirmProvider";
 
 const TYPES = [
   { value: "tasks", label: "Tasks" },
@@ -16,6 +17,7 @@ const PERIODS = ["daily", "weekly", "monthly"];
 
 const Goals = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const { items, status } = useSelector((s) => s.goals);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -131,7 +133,13 @@ const Goals = () => {
                     </button>
                     <button
                       onClick={async () => {
-                        if (!window.confirm("Delete this goal?")) return;
+                        const ok = await confirm({
+                          title: "Delete goal?",
+                          message: "This goal will be permanently deleted.",
+                          confirmText: "Delete",
+                          tone: "danger",
+                        });
+                        if (!ok) return;
                         const r = await dispatch(deleteGoal(g._id));
                         if (deleteGoal.fulfilled.match(r)) toast.success("Deleted");
                       }}

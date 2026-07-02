@@ -5,6 +5,7 @@ import { FiEdit2, FiTrash2, FiCheck, FiClock } from "react-icons/fi";
 import { updateTask, deleteTask } from "../features/tasks/tasksSlice";
 import { getCategory } from "../lib/constants";
 import { dueLabel } from "../lib/dates";
+import { useConfirm } from "./ConfirmProvider";
 
 const priorityStyles = {
   low: "bg-emerald-100 text-emerald-700",
@@ -21,6 +22,7 @@ const dueTones = {
 
 const TaskItem = ({ task, onEdit }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const cat = getCategory(task.category);
   const due = dueLabel(task.dueDate);
 
@@ -29,7 +31,13 @@ const TaskItem = ({ task, onEdit }) => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Delete this task? This cannot be undone.")) return;
+    const ok = await confirm({
+      title: "Delete task?",
+      message: "This will permanently delete this task. This cannot be undone.",
+      confirmText: "Delete",
+      tone: "danger",
+    });
+    if (!ok) return;
     const result = await dispatch(deleteTask(task._id));
     if (deleteTask.fulfilled.match(result)) {
       toast.success("Task deleted");

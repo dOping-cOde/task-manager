@@ -22,6 +22,7 @@ import {
 } from "../features/mockTests/mockTestsSlice";
 import { getCategory } from "../lib/constants";
 import useInfiniteScroll from "../lib/useInfiniteScroll";
+import { useConfirm } from "../components/ConfirmProvider";
 
 const CORE = ["Quantitative Aptitude", "Reasoning", "English", "General Awareness"];
 
@@ -31,6 +32,7 @@ const fmtDate = (d) =>
 
 const MockTests = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const { items, status } = useSelector((s) => s.mockTests);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -225,7 +227,13 @@ const MockTests = () => {
               </button>
               <button
                 onClick={async () => {
-                  if (!window.confirm("Delete this mock test?")) return;
+                  const ok = await confirm({
+                    title: "Delete mock test?",
+                    message: "This mock test result will be permanently deleted.",
+                    confirmText: "Delete",
+                    tone: "danger",
+                  });
+                  if (!ok) return;
                   const r = await dispatch(deleteMockTest(t._id));
                   if (deleteMockTest.fulfilled.match(r)) toast.success("Deleted");
                 }}
