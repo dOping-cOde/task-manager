@@ -61,6 +61,18 @@ export const deleteTask = createAsyncThunk(
   }
 );
 
+export const deleteAllTasks = createAsyncThunk(
+  "tasks/deleteAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.delete("/tasks");
+      return true;
+    } catch (err) {
+      return rejectWithValue(extractError(err));
+    }
+  }
+);
+
 // Trigger the pending-task reminder digest to the user's email on demand.
 export const remindMe = createAsyncThunk(
   "tasks/remind",
@@ -123,6 +135,11 @@ const tasksSlice = createSlice({
       // Delete
       .addCase(deleteTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t._id !== action.payload);
+      })
+      // Delete all
+      .addCase(deleteAllTasks.fulfilled, (state) => {
+        state.items = [];
+        state.justCompleted = null;
       });
   },
 });

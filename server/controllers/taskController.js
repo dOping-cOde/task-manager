@@ -214,6 +214,20 @@ export const remindMe = async (req, res, next) => {
 };
 
 /**
+ * @desc    Delete all tasks for the logged-in user
+ * @route   DELETE /api/tasks
+ * @access  Private
+ */
+export const deleteAllTasks = async (req, res, next) => {
+  try {
+    const { deletedCount } = await Task.deleteMany({ user: req.user._id });
+    res.json({ deletedCount, message: "All tasks deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @desc    Delete a task
  * @route   DELETE /api/tasks/:id
  * @access  Private

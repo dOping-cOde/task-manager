@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { FiPlus, FiSearch, FiInbox, FiBell, FiCalendar } from "react-icons/fi";
+import { FiPlus, FiSearch, FiInbox, FiBell, FiCalendar, FiTrash2 } from "react-icons/fi";
 
-import { fetchTasks, remindMe } from "../features/tasks/tasksSlice";
+import { fetchTasks, remindMe, deleteAllTasks } from "../features/tasks/tasksSlice";
 import TaskItem from "../components/TaskItem";
 import TaskModal from "../components/TaskModal";
 import { CATEGORIES } from "../lib/constants";
@@ -62,6 +62,7 @@ const Dashboard = () => {
   });
 
   const [reminding, setReminding] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
 
   const openCreate = () => {
     setEditingTask(null);
@@ -70,6 +71,23 @@ const Dashboard = () => {
   const openEdit = (task) => {
     setEditingTask(task);
     setModalOpen(true);
+  };
+
+  const handleDeleteAll = async () => {
+    if (
+      !window.confirm(
+        `Delete all ${items.length} task${items.length === 1 ? "" : "s"}? This cannot be undone.`
+      )
+    )
+      return;
+    setDeletingAll(true);
+    const result = await dispatch(deleteAllTasks());
+    setDeletingAll(false);
+    if (deleteAllTasks.fulfilled.match(result)) {
+      toast.success("All tasks deleted", { icon: "🗑️" });
+    } else {
+      toast.error(result.payload || "Could not delete tasks");
+    }
   };
 
   const handleRemind = async () => {
@@ -163,6 +181,21 @@ const Dashboard = () => {
               className="input-field py-2.5 pl-10"
             />
           </div>
+          {items.length > 0 && (
+            <button
+              onClick={handleDeleteAll}
+              disabled={deletingAll}
+              className="btn-ghost border border-red-200 bg-white text-red-600 hover:bg-red-50"
+              title="Delete all tasks"
+            >
+              {deletingAll ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-200 border-t-red-600" />
+              ) : (
+                <FiTrash2 />
+              )}
+              <span className="hidden sm:inline">Delete all</span>
+            </button>
+          )}
           <button
             onClick={handleRemind}
             disabled={reminding}
