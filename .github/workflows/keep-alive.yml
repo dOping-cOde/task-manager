@@ -10,7 +10,7 @@ name: Keep Render app awake
 
 on:
   schedule:
-    - cron: "*/10 * * * *" # every 10 minutes
+    - cron: "*/5 * * * *" # every 5 minutes (extra margin vs GitHub's schedule delays)
   workflow_dispatch: {} # lets you run it manually from the Actions tab
 
 # If a run is still going when the next is scheduled, skip the new one.
