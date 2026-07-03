@@ -8,6 +8,7 @@ import mockTestsReducer from "../features/mockTests/mockTestsSlice";
 import goalsReducer from "../features/goals/goalsSlice";
 import challengesReducer from "../features/challenges/challengesSlice";
 import yearTrackerReducer from "../features/yearTracker/yearTrackerSlice";
+import revisionsReducer from "../features/revisions/revisionsSlice";
 import notesReducer from "../features/notes/notesSlice";
 import notificationsReducer from "../features/notifications/notificationsSlice";
 import userReducer from "../features/user/userSlice";
@@ -25,6 +26,7 @@ export const store = configureStore({
     goals: goalsReducer,
     challenges: challengesReducer,
     yearTracker: yearTrackerReducer,
+    revisions: revisionsReducer,
     notes: notesReducer,
     notifications: notificationsReducer,
     user: userReducer,
