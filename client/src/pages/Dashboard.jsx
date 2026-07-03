@@ -8,7 +8,7 @@ import TaskItem from "../components/TaskItem";
 import TaskModal from "../components/TaskModal";
 import ExamFocus from "../components/ExamFocus";
 import { CATEGORIES } from "../lib/constants";
-import { dateKey, todayKey } from "../lib/dates";
+import { isTaskForToday } from "../lib/dates";
 import useInfiniteScroll from "../lib/useInfiniteScroll";
 import { useConfirm } from "../components/ConfirmProvider";
 
@@ -42,7 +42,6 @@ const Dashboard = () => {
   }, [items]);
 
   const visibleTasks = useMemo(() => {
-    const today = todayKey();
     return items
       .filter((t) => {
         if (statusFilter === "active") return !t.completed;
@@ -50,7 +49,7 @@ const Dashboard = () => {
         return true;
       })
       .filter((t) => (subject === "all" ? true : t.category === subject))
-      .filter((t) => !todayOnly || (t.dueDate && dateKey(t.dueDate) === today))
+      .filter((t) => !todayOnly || isTaskForToday(t))
       .filter((t) =>
         t.title.toLowerCase().includes(search.trim().toLowerCase())
       );
@@ -174,7 +173,7 @@ const Dashboard = () => {
                 ? "border-brand-600 bg-brand-50 text-brand-700"
                 : "border-slate-200 bg-white text-slate-500 hover:text-slate-800"
             }`}
-            title="Show only tasks due today"
+            title="Show only tasks scheduled for or completed today"
           >
             <FiCalendar /> Today
           </button>

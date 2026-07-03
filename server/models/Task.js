@@ -46,6 +46,12 @@ const taskSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // When the task was last marked done. Powers "done today" views; cleared
+    // when the task is un-completed.
+    completedAt: {
+      type: Date,
+      default: null,
+    },
     // Set once XP has been awarded for this task, to prevent re-farming XP
     // by toggling completion on and off.
     rewarded: {

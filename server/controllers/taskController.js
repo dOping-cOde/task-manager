@@ -171,6 +171,10 @@ export const updateTask = async (req, res, next) => {
     if (dueDate !== undefined) task.dueDate = dueDate || null;
     if (completed !== undefined) task.completed = completed;
 
+    // Stamp / clear the completion time so "done today" views work.
+    if (!wasCompleted && task.completed) task.completedAt = new Date();
+    else if (wasCompleted && !task.completed) task.completedAt = null;
+
     // Award only on the first false -> true transition.
     let reward = null;
     if (!wasCompleted && task.completed && !task.rewarded) {

@@ -29,6 +29,18 @@ export const dueLabel = (iso) => {
   };
 };
 
+// A task belongs to "Today" if it's scheduled for today OR was completed
+// today. `completedAt` may be missing on older tasks, so fall back to
+// `updatedAt` for those (a task done today was, by definition, updated today).
+export const isTaskForToday = (task) => {
+  const today = todayKey();
+  const dueToday = task.dueDate && dateKey(task.dueDate) === today;
+  const doneToday =
+    task.completed &&
+    dateKey(task.completedAt || task.updatedAt) === today;
+  return Boolean(dueToday || doneToday);
+};
+
 export const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",

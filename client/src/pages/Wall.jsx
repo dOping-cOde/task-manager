@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FiPlus, FiCheck, FiEdit2 } from "react-icons/fi";
+import { FiPlus, FiCheck, FiEdit2, FiCalendar } from "react-icons/fi";
 
 import { fetchTasks, updateTask } from "../features/tasks/tasksSlice";
 import TaskModal from "../components/TaskModal";
 import { getCategory } from "../lib/constants";
-import { dueLabel, dateKey, todayKey } from "../lib/dates";
+import { dueLabel, dateKey, todayKey, isTaskForToday } from "../lib/dates";
 import useInfiniteScroll from "../lib/useInfiniteScroll";
 
 // Warm sticky-note paper palette, keyed to each CGL subject. These are
@@ -44,6 +44,7 @@ const Wall = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [showDone, setShowDone] = useState(true);
+  const [todayOnly, setTodayOnly] = useState(false);
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -55,6 +56,7 @@ const Wall = () => {
   const notes = useMemo(() => {
     return items
       .filter((t) => showDone || !t.completed)
+      .filter((t) => !todayOnly || isTaskForToday(t))
       .slice()
       .sort((a, b) => {
         if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
@@ -62,7 +64,7 @@ const Wall = () => {
         if (b.dueDate) return 1;
         return 0;
       });
-  }, [items, showDone]);
+  }, [items, showDone, todayOnly]);
 
   const overdueCount = useMemo(
     () =>
@@ -75,7 +77,7 @@ const Wall = () => {
   // Pin only a growing slice so a wall with hundreds of notes stays smooth.
   const { visible, hasMore, sentinelRef } = useInfiniteScroll(notes, {
     pageSize: 24,
-    resetKey: String(showDone),
+    resetKey: `${showDone}|${todayOnly}`,
   });
 
   const openCreate = () => {
@@ -118,6 +120,17 @@ const Wall = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTodayOnly((v) => !v)}
+              title="Show only tasks scheduled for or completed today"
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold backdrop-blur transition ${
+                todayOnly
+                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                  : "bg-black/25 text-amber-50 hover:bg-black/35"
+              }`}
+            >
+              <FiCalendar /> Today
+            </button>
             <button
               onClick={() => setShowDone((v) => !v)}
               className="rounded-lg bg-black/25 px-3 py-2 text-sm font-semibold text-amber-50 backdrop-blur transition hover:bg-black/35"
