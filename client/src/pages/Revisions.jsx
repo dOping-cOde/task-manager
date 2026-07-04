@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   FiPlus,
@@ -12,6 +13,8 @@ import {
   FiMinus,
   FiRotateCw,
   FiInbox,
+  FiHash,
+  FiChevronRight,
 } from "react-icons/fi";
 
 import {
@@ -143,6 +146,23 @@ const Revisions = () => {
           <FiPlus className="text-lg" /> Add chapter
         </button>
       </div>
+
+      {/* Maths Kit quick access — daily revision reference */}
+      <Link
+        to="/maths-kit"
+        className="mb-6 flex items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-4 transition hover:bg-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+      >
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-600 text-xl text-white">
+          <FiHash />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-bold text-slate-900 dark:text-white">Maths Kit</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Tables, squares, cubes, Pythagoras triplets & fraction–percent to revise daily.
+          </p>
+        </div>
+        <FiChevronRight className="shrink-0 text-slate-400" />
+      </Link>
 
       {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
