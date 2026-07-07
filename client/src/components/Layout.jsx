@@ -14,6 +14,7 @@ import { clearTasks } from "../features/tasks/tasksSlice";
 import { resetGamification, fetchStats } from "../features/gamification/gamificationSlice";
 import { toggleTheme, toggleSidebar, setMobileSidebar } from "../features/ui/uiSlice";
 import { fetchNotifications } from "../features/notifications/notificationsSlice";
+import { fetchProfile } from "../features/user/userSlice";
 import XpBar from "./XpBar";
 import RewardWatcher from "./RewardWatcher";
 import MotivationPopup from "./MotivationPopup";
@@ -60,6 +61,11 @@ const Layout = () => {
   useEffect(() => {
     dispatch(fetchStats());
     dispatch(fetchNotifications());
+    // Load the full profile once for the whole app shell. The login response
+    // omits examDate, so without this the Dashboard countdown ("N days to go")
+    // stays blank until the user happens to open the Profile page. Fetching it
+    // here makes the exam date available on first load, wherever they land.
+    dispatch(fetchProfile());
   }, [dispatch]);
 
   // Close profile menu on outside click.
