@@ -9,6 +9,7 @@ import goalsReducer from "../features/goals/goalsSlice";
 import challengesReducer from "../features/challenges/challengesSlice";
 import yearTrackerReducer from "../features/yearTracker/yearTrackerSlice";
 import revisionsReducer from "../features/revisions/revisionsSlice";
+import syllabusReducer from "../features/syllabus/syllabusSlice";
 import notesReducer from "../features/notes/notesSlice";
 import notificationsReducer from "../features/notifications/notificationsSlice";
 import userReducer from "../features/user/userSlice";
@@ -27,6 +28,7 @@ export const store = configureStore({
     challenges: challengesReducer,
     yearTracker: yearTrackerReducer,
     revisions: revisionsReducer,
+    syllabus: syllabusReducer,
     notes: notesReducer,
     notifications: notificationsReducer,
     user: userReducer,

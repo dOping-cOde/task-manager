@@ -6,7 +6,7 @@ import {
   FiCheckCircle, FiCheckSquare, FiCalendar, FiClock, FiFileText,
   FiTarget, FiBookOpen, FiBarChart2, FiAward, FiBell, FiUser,
   FiSettings, FiLogOut, FiMenu, FiX, FiSun, FiMoon, FiChevronLeft, FiCoffee,
-  FiGrid, FiCpu, FiMessageSquare, FiZap, FiTrendingUp, FiRepeat, FiHash,
+  FiGrid, FiCpu, FiMessageSquare, FiZap, FiTrendingUp, FiRepeat, FiHash, FiList,
 } from "react-icons/fi";
 
 import { logout } from "../features/auth/authSlice";
@@ -28,6 +28,7 @@ const NAV = [
   { to: "/challenges", label: "21-Day Challenge", icon: FiZap },
   { to: "/year-tracker", label: "365 Days", icon: FiTrendingUp },
   { to: "/notes", label: "Notes", icon: FiBookOpen },
+  { to: "/syllabus", label: "Syllabus Tracker", icon: FiList },
   { to: "/revisions", label: "Revision", icon: FiRepeat },
   { to: "/maths-kit", label: "Maths Kit", icon: FiHash },
   { to: "/planner", label: "AI Planner", icon: FiCpu },

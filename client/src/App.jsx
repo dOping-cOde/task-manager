@@ -12,6 +12,7 @@ import StudyTimer from "./pages/StudyTimer";
 import MockTests from "./pages/MockTests";
 import Goals from "./pages/Goals";
 import Revisions from "./pages/Revisions";
+import Syllabus from "./pages/Syllabus";
 import MathsKit from "./pages/MathsKit";
 import Challenges from "./pages/Challenges";
 import YearTracker from "./pages/YearTracker";
@@ -50,6 +51,7 @@ function App() {
         <Route path="/mock-tests" element={<MockTests />} />
         <Route path="/goals" element={<Goals />} />
         <Route path="/revisions" element={<Revisions />} />
+        <Route path="/syllabus" element={<Syllabus />} />
         <Route path="/maths-kit" element={<MathsKit />} />
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/year-tracker" element={<YearTracker />} />
