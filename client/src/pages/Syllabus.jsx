@@ -257,9 +257,10 @@ const Syllabus = () => {
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {chapters.map((chapter) => (
+                  {chapters.map((chapter, i) => (
                     <ChapterRow
                       key={chapter._id}
+                      index={i}
                       chapter={chapter}
                       dispatch={dispatch}
                       confirm={confirm}
@@ -285,7 +286,7 @@ const Syllabus = () => {
   );
 };
 
-const ChapterRow = ({ chapter, dispatch, confirm, onEdit }) => {
+const ChapterRow = ({ index, chapter, dispatch, confirm, onEdit }) => {
   const toggleDone = () => {
     dispatch(
       updateChapter({
@@ -315,6 +316,11 @@ const ChapterRow = ({ chapter, dispatch, confirm, onEdit }) => {
           : "border-slate-200 hover:border-brand-200 dark:border-slate-700"
       }`}
     >
+      {/* Chapter number (within its subject) */}
+      <span className="w-6 shrink-0 text-right text-sm font-bold tabular-nums text-slate-400">
+        {index + 1}.
+      </span>
+
       {/* Checkbox */}
       <button
         onClick={toggleDone}
